@@ -1,4 +1,4 @@
-AeroFS Python SDF
+AeroFS Python SDK
 ==
 
 AeroFS-Python-SDK is what you might guess it is -- an AeroFS API client written
