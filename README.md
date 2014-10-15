@@ -1,7 +1,10 @@
-AeroPY
+AeroFS Python SDF
 ==
 
-AeroPY is an AeroFS API client written in Python.
+AeroFS-Python-SDK is what you might guess it is -- an AeroFS API client written
+in Python.
 
-    TODO: this project is a work in progress.
+News
+--
 
+This project is a work in progress. Stay tuned for updates.
