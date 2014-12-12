@@ -1,10 +1,8 @@
 AeroFS Python SDK
 ==
 
-AeroFS-Python-SDK is what you might guess it is -- an AeroFS API client written
-in Python.
+*Work in progress.*
 
-News
---
+*Not officially endorsed by AeroFS at this time.*
 
-This project is a work in progress. Stay tuned for updates.
+An AeroFS API SDK written in Python.
