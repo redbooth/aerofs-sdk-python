@@ -27,18 +27,14 @@ class APIClient(object):
         return res.json()
 
     def create_folder(self, parent_folder, foldername):
-        url = "https://{}{}/folders".format(
-            self.instance_configuration.hostname,
-            VERSION_PREFIX)
+        url = "https://{}{}/folders".format(self.instance_configuration.hostname, VERSION_PREFIX)
         data = {"parent": parent_folder, "name": foldername}
         res = self.session.post(url, json=data)
         res.raise_for_status()
         return res.json()
 
     def create_file(self, parent_folder, filename):
-        url = "https://{}{}/files".format(
-            self.instance_configuration.hostname,
-            VERSION_PREFIX)
+        url = "https://{}{}/files".format( self.instance_configuration.hostname, VERSION_PREFIX)
         data = {"parent": parent_folder, "name": filename}
         print data
         res = self.session.post(url, json=data)
@@ -46,10 +42,8 @@ class APIClient(object):
         return res.json()
 
     def set_file_contents(self, oid, stream):
-        url = "https://{}{}/files/{}/content".format(
-            self.instance_configuration.hostname,
-            VERSION_PREFIX,
-            oid)
+        url = "https://{}{}/files/{}/content".format(self.instance_configuration.hostname,
+                                                     VERSION_PREFIX, oid)
         res = self.session.put(url, data=stream)
         res.raise_for_status()
         # Not res.json() because this PUT replies with no content
