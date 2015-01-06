@@ -15,13 +15,8 @@ virtualenv env
 ./env/bin/pip install -r requirements.txt 
 ```
 
-Credits
+Contributors
 ---
 
-Primary Author:
-
-* Matt Pillar <matt@aerofs.com>
-
-Contributing Author(s):
-
-* Drew Fisher <drew@areofs.com>
+* Matt Pillar
+* Drew Fisher
