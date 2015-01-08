@@ -16,7 +16,7 @@ setuptools.setup(name='aerofs',
       description='aerofs',
       author='Matt Pillar',
       author_email='matt@aerofs.com',
-      url='https://github.com/mpillar/aerofs-python-sdk',
+      url='https://github.com/mpillar/aerofs-sdk-python',
       packages=packages,
       install_requires=install_requires
 )
