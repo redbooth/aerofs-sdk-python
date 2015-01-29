@@ -35,7 +35,6 @@ class APIClient(object):
     def create_file(self, parent_folder, filename):
         url = '{}/files'.format(self._url_prefix())
         data = {'parent': parent_folder, 'name': filename}
-        print data
         res = self.session.post(url, json=data)
         res.raise_for_status()
         return res.json()
@@ -44,8 +43,7 @@ class APIClient(object):
         url = '{}/files/{}/content'.format(self._url_prefix(), oid)
         res = self.session.put(url, data=stream)
         res.raise_for_status()
-        # Not res.json() because this PUT replies with no content
-        return res
+        return
 
     def list_children(self, oid):
         url = '{}/folders/{}/children'.format(self._url_prefix(), oid)
