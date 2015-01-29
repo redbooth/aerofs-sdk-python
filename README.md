@@ -1,5 +1,4 @@
-AeroFS SDK (Python)
-==
+# AeroFS SDK (Python)
 
 *Work in progress.*
 
@@ -7,16 +6,14 @@ AeroFS SDK (Python)
 
 The `aerofs-sdk-python` project is an AeroFS API SDK written in Python.
 
-Install
----
+## Install
 
 ```
 virtualenv env
 ./env/bin/pip install -r requirements.txt 
 ```
 
-Contributors
----
+## Contributors
 
 * Matt Pillar
 * Drew Fisher
