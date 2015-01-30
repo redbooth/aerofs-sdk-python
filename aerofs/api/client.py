@@ -1,6 +1,8 @@
 import requests
+import io
 
 VERSION_PREFIX = '/api/v1.2'
+MAX_CHUNK_SIZE = 1024 * 1024 # 1 MB chunks.
 
 class APIClient(object):
     def __init__(self, instance_configuration, access_token):
@@ -17,7 +19,7 @@ class APIClient(object):
                    'Endpoint-Consistency': 'strict'}
         return headers
 
-    # TODO allow other interesting interactions wiht the API backend.
+    # TODO allow other interesting interactions with the API backend.
 
     def get_user_info(self, email):
         url = '{}/users/{}'.format(self._url_prefix(), email)
@@ -40,8 +42,48 @@ class APIClient(object):
         return res.json()
 
     def set_file_content(self, oid, stream):
-        url = '{}/files/{}/content'.format(self._url_prefix(), oid)
-        res = self.session.put(url, data=stream)
+        url = "{}/files/{}/content".format(self._url_prefix(), oid)
+
+        # Create upload identifier.
+        initial_headers = {
+            "Content-Range": "bytes */*",
+            "Content-Length": "0",
+        }
+
+        res = self.session.put(url, headers=initial_headers)
+        res.raise_for_status()
+        upload_id = res.headers["Upload-ID"]
+        etag = res.headers.get("ETag")
+        current_chunk = stream.read(MAX_CHUNK_SIZE)
+        total_bytes_sent = 0
+
+        # Upload content, one chunk at a time.
+        headers = None
+        while len(current_chunk) != 0:
+            headers = {
+                "Upload-ID": upload_id,
+                "Endpoint-Consistency": "strict",
+                "Content-Range": "bytes {}-{}/*".format(
+                    total_bytes_sent,
+                    total_bytes_sent + len(current_chunk) - 1),
+            }
+
+            if etag: headers["If-Match"] = etag
+            res = self.session.put(url, headers=headers, data=io.BytesIO(current_chunk))
+            res.raise_for_status()
+            total_bytes_sent += len(current_chunk)
+            current_chunk = stream.read(MAX_CHUNK_SIZE)
+
+        # Commit upload.
+        commit_headers = {
+            "Upload-ID": upload_id,
+            "Endpoint-Consistency": "strict",
+            "Content-Range": "bytes */{}".format(total_bytes_sent),
+            "Content-Length": "0",
+        }
+
+        if etag: headers["If-Match"] = etag
+        res = self.session.put(url, headers=commit_headers)
         res.raise_for_status()
         return
 
