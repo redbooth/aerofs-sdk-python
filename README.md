@@ -2,8 +2,6 @@
 
 *Work in progress.*
 
-*Not officially endorsed by AeroFS at this time.*
-
 The `aerofs-sdk-python` project is an AeroFS Private Cloud API SDK written in
 Python.
 
