@@ -4,14 +4,13 @@
 
 *Not officially endorsed by AeroFS at this time.*
 
-The `aerofs-sdk-python` project is an AeroFS API SDK written in Python.
+The `aerofs-sdk-python` project is an AeroFS Private Cloud API SDK written in
+Python.
 
 ## Install
 
-```
-virtualenv env
-./env/bin/pip install -r requirements.txt 
-```
+In the future this should be packaged by pip; for now, run the `setup.sh`
+installation script.
 
 ## Contributors
 
