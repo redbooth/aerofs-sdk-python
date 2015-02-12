@@ -92,3 +92,15 @@ class APIClient(object):
         res = self.session.get(url)
         res.raise_for_status()
         return res.json()
+
+    def list_invitations(self, email):
+        url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def accept_invitation(self, email, sid):
+        url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email, sid)
+        res = self.session.post(url)
+        res.raise_for_status()
+        return res.json()
