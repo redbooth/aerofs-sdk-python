@@ -8,7 +8,7 @@ packages = [
 ]
 
 setuptools.setup(name='aerofs',
-      version='0.1.0',
+      version='0.1.3',
       description='aerofs',
       author='Matt Pillar',
       author_email='matt@aerofs.com',
