@@ -7,16 +7,12 @@ packages = [
     "aerofs.api"
 ]
 
-# Pull requirements from requirements.txt file.
-requirements_lines = [line.strip() for line in open('requirements.txt').readlines()]
-install_requires = list(filter(None, requirements_lines))
-
 setuptools.setup(name='aerofs',
-      version='0.1',
+      version='0.1.0',
       description='aerofs',
       author='Matt Pillar',
       author_email='matt@aerofs.com',
       url='https://github.com/mpillar/aerofs-sdk-python',
       packages=packages,
-      install_requires=install_requires
+      install_requires=['requests']
 )

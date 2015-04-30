@@ -7,10 +7,11 @@ Python.
 
 ## Install
 
-In the future this should be packaged by pip; for now, run the `setup.sh`
-installation script.
+For development run the `setup.sh` script. Otherwise, use `pip install aerofs`.
 
 ## Contributors
 
-* Matt Pillar
+In alphabetical order by first name:
+
 * Drew Fisher
+* Matt Pillar
