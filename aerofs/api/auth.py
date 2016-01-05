@@ -7,6 +7,6 @@ class APIAuthClient(object):
 
     def get_access_token_with_code(self, code):
         # TODO finish this...
-        # This is required to facilitate the full OAuth flow. Not required if we are using the
-        # user settings token.
+        # This is required to facilitate the full OAuth flow. Not required if
+        # we are using the user settings token.
         return

@@ -1,5 +1,5 @@
-import requests
 import io
+import requests
 
 VERSION_PREFIX = '/api/v1.2'
 MAX_CHUNK_SIZE = 1024 * 1024 # 1 MB chunks.
@@ -12,20 +12,60 @@ class APIClient(object):
         self.session.headers = self._auth_headers()
 
     def _url_prefix(self):
-        return 'https://{}{}'.format(self.instance_configuration.hostname, VERSION_PREFIX)
+        return 'https://{}{}'.format(self.instance_configuration.hostname,
+                                     VERSION_PREFIX)
 
     def _auth_headers(self):
-        headers = {'Authorization': 'Bearer {}'.format(self.access_token),
-                   'Endpoint-Consistency': 'strict'}
+        headers = {
+            'Authorization': 'Bearer {}'.format(self.access_token),
+            'Endpoint-Consistency': 'strict',
+            'Content-Type': 'application/json',
+        }
         return headers
 
-    # TODO allow other interesting interactions with the API backend.
-
-    def get_user_info(self, email):
+    def get_user(self, email):
         url = '{}/users/{}'.format(self._url_prefix(), email)
         res = self.session.get(url)
         res.raise_for_status()
         return res.json()
+
+    def create_user(self, email, first_name, last_name):
+        data = '{{"email":"{}","first_name":"{}","last_name":"{}"}}'.format(
+            email, first_name, last_name)
+
+        url = '{}/users'.format(self._url_prefix())
+        res = self.session.post(url, data=data)
+        res.raise_for_status()
+        return res.json()
+
+    def update_user(self, email, first_name, last_name):
+        data = '{{"email":"{}","first_name":"{}","last_name":"{}"}}'.format(
+            email, first_name, last_name)
+
+        url = '{}/users/{}'.format(self._url_prefix(), email)
+        res = self.session.put(url, data=data)
+        res.raise_for_status()
+        return res.json()
+
+    def update_user_password(self, email, password):
+        data = '"{}"'.format(password)
+
+        url = '{}/users/{}/password'.format(self._url_prefix(), email)
+        res = self.session.put(url, data=data)
+        res.raise_for_status()
+        return 'OK'
+
+    def delete_user(self, email):
+        url = '{}/users/{}'.format(self._url_prefix(), email)
+        res = self.session.delete(url)
+        res.raise_for_status()
+        return 'OK'
+
+    def delete_user_password(self, email):
+        url = '{}/users/{}/password'.format(self._url_prefix(), email)
+        res = self.session.delete(url)
+        res.raise_for_status()
+        return 'OK'
 
     def create_folder(self, parent_folder, foldername):
         url = '{}/folders'.format(self._url_prefix())
@@ -68,8 +108,11 @@ class APIClient(object):
                     total_bytes_sent + len(current_chunk) - 1),
             }
 
-            if etag: headers["If-Match"] = etag
-            res = self.session.put(url, headers=headers, data=io.BytesIO(current_chunk))
+            if etag:
+                headers["If-Match"] = etag
+
+            res = self.session.put(url, headers=headers, data=io.BytesIO(
+                current_chunk))
             res.raise_for_status()
             total_bytes_sent += len(current_chunk)
             current_chunk = stream.read(MAX_CHUNK_SIZE)
@@ -82,7 +125,9 @@ class APIClient(object):
             "Content-Length": "0",
         }
 
-        if etag: headers["If-Match"] = etag
+        if etag:
+            headers["If-Match"] = etag
+
         res = self.session.put(url, headers=commit_headers)
         res.raise_for_status()
         return
@@ -100,7 +145,8 @@ class APIClient(object):
         return res.json()
 
     def accept_invitation(self, email, sid):
-        url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email, sid)
+        url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email,
+                                                  sid)
         res = self.session.post(url)
         res.raise_for_status()
         return res.json()
