@@ -292,16 +292,31 @@ class APIClient(object):
         res.raise_for_status()
         return 'OK'
 
+    # invitation object
 
-    def list_invitations(self, email):
+    def get_invitations(self, email):
         url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
         res = self.session.get(url)
         res.raise_for_status()
         return res.json()
 
-    def accept_invitation(self, email, sid):
+    def get_invitation(self, email, uuid):
         url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email,
-                                                  sid)
+                                                  uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def accept_invitation(self, email, uuid):
+        url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email,
+                                                  uuid)
         res = self.session.post(url)
+        res.raise_for_status()
+        return res.json()
+
+    def ignore_invitation(self, email, uuid):
+        url = '{}/users/{}/invitations/{}'.format(self._url_prefix(), email,
+                                                  uuid)
+        res = self.session.delete(url)
         res.raise_for_status()
         return res.json()
