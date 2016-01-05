@@ -264,6 +264,34 @@ class APIClient(object):
         res.raise_for_status()
         return 'OK'
 
+    # pending member object
+
+    def get_pending_members(self, uuid):
+        url = '{}/shares/{}/pending'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def get_pending_member(self, uuid, email):
+        url = '{}/shares/{}/pending/{}'.format(self._url_prefix(), uuid, email)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def add_pending_member(self, uuid, email, permissions, note):
+        data = {'email': email, 'permissions': permissions, 'note': note}
+
+        url = '{}/shares/{}/pending'.format(self._url_prefix(), uuid)
+        res = self.session.post(url, json=data)
+        res.raise_for_status()
+        return res.json()
+
+    def remove_pending_member(self, uuid, email):
+        url = '{}/shares/{}/pending/{}'.format(self._url_prefix(), uuid, email)
+        res = self.session.delete(url)
+        res.raise_for_status()
+        return 'OK'
+
 
     def list_invitations(self, email):
         url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
