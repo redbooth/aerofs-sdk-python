@@ -228,6 +228,42 @@ class APIClient(object):
         res.raise_for_status()
         return res.json()
 
+    # member object
+
+    def get_members(self, uuid):
+        url = '{}/shares/{}/members'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def get_member(self, uuid, email):
+        url = '{}/shares/{}/members/{}'.format(self._url_prefix(), uuid, email)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def add_member(self, uuid, email, permissions):
+        data = {'email': email, 'permissions': permissions}
+
+        url = '{}/shares/{}/members'.format(self._url_prefix(), uuid)
+        res = self.session.post(url, json=data)
+        res.raise_for_status()
+        return res.json()
+
+    def update_member_permissions(self, uuid, email, permissions):
+        data = {'permissions': permissions}
+
+        url = '{}/shares/{}/members/{}'.format(self._url_prefix(), uuid, email)
+        res = self.session.put(url, json=data)
+        res.raise_for_status()
+        return res.json()
+
+    def remove_member(self, uuid, email):
+        url = '{}/shares/{}/members/{}'.format(self._url_prefix(), uuid, email)
+        res = self.session.delete(url)
+        res.raise_for_status()
+        return 'OK'
+
 
     def list_invitations(self, email):
         url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
