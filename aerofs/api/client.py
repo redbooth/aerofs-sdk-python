@@ -23,6 +23,8 @@ class APIClient(object):
         }
         return headers
 
+    # user object
+
     def get_user(self, email):
         url = '{}/users/{}'.format(self._url_prefix(), email)
         res = self.session.get(url)
@@ -30,20 +32,20 @@ class APIClient(object):
         return res.json()
 
     def create_user(self, email, first_name, last_name):
-        data = '{{"email":"{}","first_name":"{}","last_name":"{}"}}'.format(
-            email, first_name, last_name)
+        data = {'email': email, 'first_name': first_name,
+                'last_name': last_name}
 
         url = '{}/users'.format(self._url_prefix())
-        res = self.session.post(url, data=data)
+        res = self.session.post(url, json=data)
         res.raise_for_status()
         return res.json()
 
     def update_user(self, email, first_name, last_name):
-        data = '{{"email":"{}","first_name":"{}","last_name":"{}"}}'.format(
-            email, first_name, last_name)
+        data = {'email': email, 'first_name': first_name,
+                'last_name': last_name}
 
         url = '{}/users/{}'.format(self._url_prefix(), email)
-        res = self.session.put(url, data=data)
+        res = self.session.put(url, json=data)
         res.raise_for_status()
         return res.json()
 
@@ -67,17 +69,52 @@ class APIClient(object):
         res.raise_for_status()
         return 'OK'
 
+    # folder object
+
+    def get_folder(self, uuid):
+        url = '{}/folders/{}'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def get_folder_path(self, uuid):
+        url = '{}/folders/{}/path'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def get_folder_children(self, uuid):
+        url = '{}/folders/{}/children'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
     def create_folder(self, parent_folder, foldername):
-        url = '{}/folders'.format(self._url_prefix())
         data = {'parent': parent_folder, 'name': foldername}
+
+        url = '{}/folders'.format(self._url_prefix())
         res = self.session.post(url, json=data)
         res.raise_for_status()
         return res.json()
 
+    def move_folder(self, uuid, parent_folder, foldername):
+        data = {'parent': parent_folder, 'name': foldername}
+
+        url = '{}/folders/{}'.format(self._url_prefix(), uuid)
+        res = self.session.put(url, json=data)
+        res.raise_for_status()
+        return res.json()
+
+    def delete_folder(self, uuid):
+        url = '{}/folders/{}'.format(self._url_prefix(), uuid)
+        res = self.session.delete(url)
+        res.raise_for_status()
+        return 'OK'
+
     def create_file(self, parent_folder, filename):
         url = '{}/files'.format(self._url_prefix())
         data = {'parent': parent_folder, 'name': filename}
-        res = self.session.post(url, json=data)
+        res = self.session.put(url, json=data)
         res.raise_for_status()
         return res.json()
 
@@ -131,12 +168,6 @@ class APIClient(object):
         res = self.session.put(url, headers=commit_headers)
         res.raise_for_status()
         return
-
-    def list_children(self, oid):
-        url = '{}/folders/{}/children'.format(self._url_prefix(), oid)
-        res = self.session.get(url)
-        res.raise_for_status()
-        return res.json()
 
     def list_invitations(self, email):
         url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
