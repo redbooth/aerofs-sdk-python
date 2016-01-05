@@ -208,6 +208,27 @@ class APIClient(object):
 
     # shared folder object
 
+    def get_shared_folders(self, email):
+        url = '{}/users/{}/shares'.format(self._url_prefix(), email)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def get_shared_folder_metadata(self, uuid):
+        url = '{}/shares/{}'.format(self._url_prefix(), uuid)
+        res = self.session.get(url)
+        res.raise_for_status()
+        return res.json()
+
+    def create_shared_folder(self, foldername):
+        data = {'name': foldername}
+
+        url = '{}/shares'.format(self._url_prefix())
+        res = self.session.post(url, json=data)
+        res.raise_for_status()
+        return res.json()
+
+
     def list_invitations(self, email):
         url = '{}/users/{}/invitations'.format(self._url_prefix(), email)
         res = self.session.get(url)
