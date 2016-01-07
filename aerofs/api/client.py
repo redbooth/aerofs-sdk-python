@@ -1,5 +1,6 @@
 import io
 import requests
+import urllib
 
 VERSION_PREFIX = '/api/v1.2'
 MAX_CHUNK_SIZE = 1024 * 1024 # 1 MB chunks.
@@ -26,7 +27,10 @@ class APIClient(object):
     def _handle_response(self, response):
         response.raise_for_status()
         self.response_headers = response.headers
-        return response.json()
+        try:
+            return response.json()
+        except ValueError:
+            return response.text or 'ok'
 
     def _do_delete(self, route, headers=None):
         if not headers:
@@ -52,12 +56,16 @@ class APIClient(object):
                                 json=data, headers=headers)
         return self._handle_response(res)
 
-    def _do_put(self, route, data, headers=None):
+    def _do_put(self, route, data, serialize=True, headers=None):
         if not headers:
             headers = self.auth_headers
 
-        res = self.session.put('{}{}'.format(self.url_prefix, route),
-                               json=data, headers=headers)
+        url = '{}{}'.format(self.url_prefix, route)
+        if serialize and data:
+            res = self.session.put(url, json=data, headers=headers)
+        else:
+            del headers['Content-Type']
+            res = self.session.put(url, data=data, headers=headers)
         return self._handle_response(res)
 
     # user object
@@ -163,14 +171,14 @@ class APIClient(object):
         route = '/files/{}/content'.format(uuid)
 
         # Create upload identifier.
-        headers = {
+        headers = dict(self.auth_headers, **{
             'Content-Range': 'bytes */*',
             'Content-Length': '0',
-        }
+        })
         if ifmatch:
             headers['If-Match'] = ','.join(ifmatch)
 
-        self._do_put(route, dict(), headers=headers)
+        self._do_put(route, None, headers=headers)
         upload_id = self.response_headers['Upload-ID']
         etag = self.response_headers.get('ETag')
 
@@ -178,32 +186,31 @@ class APIClient(object):
         current_chunk = stream.read(MAX_CHUNK_SIZE)
         total_bytes_sent = 0
         while len(current_chunk) != 0:
-            headers = {
+            headers = dict(self.auth_headers, **{
                 'Upload-ID': upload_id,
-                'Endpoint-Consistency': 'strict',
                 'Content-Range': 'bytes {}-{}/*'.format(
                     total_bytes_sent,
                     total_bytes_sent + len(current_chunk) - 1),
-            }
+            })
             if etag:
                 headers['If-Match'] = etag
 
-            self._do_put(route, io.BytesIO(current_chunk), headers=headers)
+            self._do_put(route, io.BytesIO(current_chunk), serialize=False,
+                         headers=headers)
 
             total_bytes_sent += len(current_chunk)
             current_chunk = stream.read(MAX_CHUNK_SIZE)
 
         # Commit upload.
-        headers = {
+        headers = dict(self.auth_headers, **{
             'Upload-ID': upload_id,
-            'Endpoint-Consistency': 'strict',
             'Content-Range': 'bytes */{}'.format(total_bytes_sent),
             'Content-Length': '0',
-        }
+        })
         if etag:
             headers['If-Match'] = etag
 
-        return self._do_put(route, dict(), headers=headers)
+        return self._do_put(route, None, headers=headers)
 
     def move_file(self, uuid, parent_folder, filename, ifmatch=None):
         headers = self.auth_headers
@@ -312,19 +319,22 @@ class APIClient(object):
     # invitation object
 
     def get_invitations(self, email):
-        route = '/users/{}/invitations'.format(email)
+        route = '/users/{}/invitations'.format(urllib.quote_plus(email))
         return self._do_get(route)
 
     def get_invitation(self, email, uuid):
-        route = '/users/{}/invitations/{}'.format(email, uuid)
+        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+                                                  uuid)
         return self._do_get(route)
 
     def accept_invitation(self, email, uuid, external=False):
-        route = '/users/{}/invitations/{}'.format(email, uuid)
+        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+                                                  uuid)
         if external:
             route += '?external=1'
         return self._do_post(route, dict())
 
     def ignore_invitation(self, email, uuid):
-        route = '/users/{}/invitations/{}'.format(email, uuid)
+        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+                                                  uuid)
         return self._do_delete(route)

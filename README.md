@@ -14,4 +14,5 @@ For development run the `setup.sh` script. Otherwise, use `pip install aerofs`.
 In alphabetical order by first name:
 
 * Drew Fisher
+* Kevin James
 * Matt Pillar
