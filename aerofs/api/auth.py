@@ -44,3 +44,9 @@ class APIAuthClient(object):
             raise
 
         print res.json()['access_token']
+
+    def revoke_access_token(self, token):
+        route = '/auth/token/{}'.format(token)
+        res = self.session.delete('{}{}'.format(self.url_prefix, route))
+        res.raise_for_status()
+        print 'ok'
