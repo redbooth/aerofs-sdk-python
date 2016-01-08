@@ -9,9 +9,6 @@ class APIAuthClient(object):
         self.url_prefix = 'https://{}'.format(instance_configuration.hostname)
 
         self.session = requests.Session()
-        self.session.headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        }
 
     def get_authorization_url(self, scopes):
         scopes = ','.join(scopes)
@@ -43,10 +40,10 @@ class APIAuthClient(object):
 
             raise
 
-        print res.json()['access_token']
+        return res.json()['access_token']
 
     def revoke_access_token(self, token):
         route = '/auth/token/{}'.format(token)
         res = self.session.delete('{}{}'.format(self.url_prefix, route))
         res.raise_for_status()
-        print 'ok'
+        return 'ok'
