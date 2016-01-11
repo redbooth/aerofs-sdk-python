@@ -14,6 +14,3 @@ from .shared_folder_member import SFMember
 from .shared_folder_pending_member import SFPendingMember
 from .user import User
 # TODO: add v1.4 objects
-# TODO: object interactions
-# TODO: "list all" routes
-# TODO: object equality

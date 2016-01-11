@@ -12,6 +12,7 @@ from .interface import writeonly
 @readonly('invitations')
 @writeonly('password')
 @synced('two_factor')
+@readonly('devices')
 class User(APIObject):
     def __init__(self, api, email):
         super(User, self).__init__(api)
@@ -23,6 +24,7 @@ class User(APIObject):
         self._invitations = None
         self._password = None
         self._two_factor = None
+        self._devices = None
 
     def from_json(self, json):
         self._first_name = json['first_name']
@@ -41,6 +43,12 @@ class User(APIObject):
     def load(self):
         data = self.api.get_user(self.email)
         self.from_json(data)
+
+    def load_devices(self):
+        data = self.api.get_devices(self.email)
+        from .device import Device
+        self._devices = frozenset([Device(self.api).from_json(d)
+                                   for d in data])
 
     def load_two_factor(self):
         data = self.api.get_user_twofactor(self.email)
