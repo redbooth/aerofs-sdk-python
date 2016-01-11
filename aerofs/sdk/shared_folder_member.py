@@ -8,7 +8,7 @@ from .interface import synced
 @readonly('first_name')
 @readonly('last_name')
 @synced('permissions')
-@readonly('etag')
+@readonly('etags', sync=False)
 class SFMember(APIObject):
     def __init__(self, api, sid, email=None):
         super(SFMember, self).__init__(api)
@@ -21,7 +21,7 @@ class SFMember(APIObject):
         self._last_name = None
         self._permissions = None
 
-        self._etag = None
+        self._etags = None
 
     def from_json(self, json):
         self._email = json['email']
@@ -34,16 +34,16 @@ class SFMember(APIObject):
         data = self.api.get_sf_member(self.shared_folder.id, self.email)
         self.from_json(data)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def save_permissions(self, matching=False):
         if not matching:
-            self._etag = None
+            self._etags = None
 
         self.api.update_sf_member(self.shared_folder.id, self.email,
-                                  self._permissions, ifmatch=[self._etag])
+                                  self._permissions, ifmatch=self._etags)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def create(self, email, permissions):
         data = self.api.add_sf_member(self.shared_folder.id, email,
@@ -52,9 +52,9 @@ class SFMember(APIObject):
 
     def delete(self, matching=False):
         if not matching:
-            self._etag = None
+            self._etags = None
 
         self.api.remove_sf_member(self.shared_folder.id, self.email,
-                                  ifmatch=[self._etag])
+                                  ifmatch=self._etags)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]

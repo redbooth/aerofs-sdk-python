@@ -13,7 +13,7 @@ from .interface import synced
 @readonly('path')
 @synced('content')
 @readonly('content_state')
-@readonly('etag', sync=False)
+@readonly('etags', sync=False)
 class File(APIObject):
     def __init__(self, api, fid=None):
         super(File, self).__init__(api)
@@ -29,8 +29,7 @@ class File(APIObject):
         self._content = None
         self._content_state = None
 
-        # TODO: here and elsewhere, update _etag usage ([None] doesn't work)
-        self._etag = None
+        self._etags = None
 
     def from_json(self, json):
         self._id = json['id']
@@ -52,13 +51,13 @@ class File(APIObject):
         data = self.api.get_file(self.id)
         self.from_json(data)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def load_content(self):
         self._content = self.api.get_file_content(self.id)
 
         self._mime_type = self.api.response_headers['Content-Type']
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def load_path(self):
         data = self.api.get_folder_path(self.id)
@@ -68,10 +67,10 @@ class File(APIObject):
 
     def save_content(self, matching=False):
         if not matching:
-            self._etag = False
+            self._etags = None
 
         self.api.upload_file_content(self.id, self._content,
-                                     ifmatch=[self._etag])
+                                     ifmatch=self._etags)
         self.load()  # new metadata
 
     def save_name(self):
@@ -84,20 +83,20 @@ class File(APIObject):
         data = self.api.create_file(parent_id, name)
         self.from_json(data)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def move(self, parent_id, name, matching=False):
         if not matching:
-            self._etag = None
+            self._etags = None
 
         data = self.api.move_file(self.id, parent_id, name,
-                                  ifmatch=[self._etag])
+                                  ifmatch=self._etags)
         self.from_json(data)
 
-        self._etag = self.api.response_headers['ETag']
+        self._etags = [self.api.response_headers['ETag']]
 
     def delete(self, matching=False):
         if not matching:
-            self._etag = None
+            self._etags = None
 
-        self.api.delete_file(self.id, ifmatch=[self._etag])
+        self.api.delete_file(self.id, ifmatch=self._etags)
