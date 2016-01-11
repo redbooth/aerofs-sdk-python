@@ -332,27 +332,27 @@ class APIClient(object):
         route = '/shares/{}/members/{}'.format(folder_id, email)
         return self._do_delete(route, headers=headers)
 
-    # sf group object
+    # sf group member object
 
-    def get_sf_groups(self, folder_id):
+    def get_sf_group_members(self, folder_id):
         route = '/shares/{}/groups'.format(folder_id)
         return self._do_get(route)
 
-    def get_sf_group(self, folder_id, group_id):
+    def get_sf_group_member(self, folder_id, group_id):
         route = '/shares/{}/groups/{}'.format(folder_id, group_id)
         return self._do_get(route)
 
-    def add_sf_group(self, folder_id, group_id, permissions):
+    def add_sf_group_member(self, folder_id, group_id, permissions):
         route = '/shares/{}/groups'.format(folder_id)
         data = {'id': group_id, 'permissions': permissions}
         return self._do_post(route, data)
 
-    def update_sf_group(self, folder_id, group_id, permissions):
+    def update_sf_group_member(self, folder_id, group_id, permissions):
         route = '/shares/{}/groups/{}'.format(folder_id, group_id)
         data = {'permissions': permissions}
         return self._do_put(route, data)
 
-    def remove_sf_group(self, folder_id, group_id):
+    def remove_sf_group_member(self, folder_id, group_id):
         route = '/shares/{}/groups/{}'.format(folder_id, group_id)
         return self._do_delete(route)
 
@@ -393,8 +393,7 @@ class APIClient(object):
     def accept_invitation(self, email, uuid, external=False):
         route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
                                                   uuid)
-        if external:
-            route += '?external=1'
+        route += '?external=' + ('1' if external else '0')
         return self._do_post(route, dict())
 
     def ignore_invitation(self, email, uuid):
