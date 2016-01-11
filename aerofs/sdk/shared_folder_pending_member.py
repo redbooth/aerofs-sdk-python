@@ -1,3 +1,4 @@
+from .common import Permission
 from .interface import APIObject
 from .interface import readonly
 
@@ -25,7 +26,8 @@ class SFPendingMember(APIObject):
         self._first_name = json.get('first_name')  # present only for accounts
         self._last_name = json.get('last_name')  # present only for accounts
         self._inviter = json['invited_by']
-        self._permissions = json['permissions']
+        self._permissions = frozenset(
+            [Permission(p) for p in json['permissions']])
         return self
 
     def load(self):

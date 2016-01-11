@@ -1,3 +1,4 @@
+from .common import Permission
 from .interface import APIObject
 from .interface import readonly
 from .interface import synced
@@ -21,7 +22,8 @@ class SFGroupMember(APIObject):
     def from_json(self, json):
         self._id = json['id']
         self._name = json['name']
-        self._permissions = json['permissions']
+        self._permissions = frozenset(
+            [Permission(p) for p in json['permissions']])
         return self
 
     def load(self):
@@ -29,8 +31,9 @@ class SFGroupMember(APIObject):
         self.from_json(data)
 
     def save_permissions(self):
-        self.api.update_sf_group_member(self.shared_folder.id, self.id,
-                                        self._permissions)
+        data = self.api.update_sf_group_member(self.shared_folder.id, self.id,
+                                               self._permissions)
+        self.from_json(data)
 
     def create(self, gid, permissions):
         data = self.api.add_sf_group_member(self.shared_folder.id, gid,

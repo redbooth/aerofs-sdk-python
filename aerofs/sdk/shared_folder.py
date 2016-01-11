@@ -1,3 +1,4 @@
+from .common import Permission
 from .interface import APIObject
 from .interface import readonly
 
@@ -37,7 +38,8 @@ class SharedFolder(APIObject):
         self._pending = frozenset(
             [SFPendingMember(self.api, self.id).from_json(f)
              for f in json['pending']])
-        self._caller_permissions = json['caller_effective_permissions']
+        self._caller_permissions = frozenset(
+            [Permission(p) for p in json['caller_effective_permissions']])
         return self
 
     def load(self):

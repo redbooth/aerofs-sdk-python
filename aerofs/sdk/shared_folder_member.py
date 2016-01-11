@@ -1,3 +1,4 @@
+from .common import Permission
 from .interface import APIObject
 from .interface import readonly
 from .interface import synced
@@ -27,7 +28,8 @@ class SFMember(APIObject):
         self._email = json['email']
         self._first_name = json['first_name']
         self._last_name = json['last_name']
-        self._permissions = json['permissions']
+        self._permissions = frozenset(
+            [Permission(p) for p in json['permissions']])
         return self
 
     def load(self):
@@ -40,8 +42,10 @@ class SFMember(APIObject):
         if not matching:
             self._etags = None
 
-        self.api.update_sf_member(self.shared_folder.id, self.email,
-                                  self._permissions, ifmatch=self._etags)
+        data = self.api.update_sf_member(self.shared_folder.id, self.email,
+                                         self._permissions,
+                                         ifmatch=self._etags)
+        self.from_json(data)
 
         self._etags = [self.api.response_headers['ETag']]
 

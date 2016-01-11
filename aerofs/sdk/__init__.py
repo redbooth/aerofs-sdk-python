@@ -1,6 +1,5 @@
 # pylint: disable=W0611
 from .common import ContentState
-from .common import get_role
 from .common import Permission
 from .device import Device
 from .file import File

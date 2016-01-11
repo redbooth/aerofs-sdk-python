@@ -1,14 +1,14 @@
-class NoRouteException(Exception):
+class APIException(Exception):
     pass
 
 
-class PermissionException(Exception):
+class NoRouteException(APIException):
     pass
 
 
-class ReadOnlyException(Exception):
+class ReadOnlyException(APIException):
     pass
 
 
-class WriteOnlyException(Exception):
+class WriteOnlyException(APIException):
     pass

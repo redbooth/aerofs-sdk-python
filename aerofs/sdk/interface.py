@@ -1,12 +1,6 @@
-from .error import PermissionException
+from .error import APIException
 from .error import ReadOnlyException
 from .error import WriteOnlyException
-
-
-REQUIRED_SCOPE = {
-    'invitations': 'acl.invitations',
-    'shares': 'acl.read',
-}
 
 
 def get_sync(o, field):
@@ -18,8 +12,7 @@ def get_sync(o, field):
             o.load()
 
     if isinstance(o.__dict__['_' + field], NoneType):
-        raise PermissionException('{} requires {} scope(s).'.format(
-            field.title(), REQUIRED_SCOPE[field]))
+        raise APIException('Could not retrieve {}.'.format(field))
 
     return o.__dict__['_' + field]
 
@@ -38,7 +31,9 @@ def readonly(field, sync=True):
         setattr(c, field, property(
             lambda o: get_sync(o, field) if sync else o.__dict__['_' + field],
             lambda _, __: raise_(ReadOnlyException(
-                '{} is a read-only field.'.format(field.title())))))
+                '{} is a read-only field.'.format(field))),
+            lambda _: raise_(ReadOnlyException(
+                '{} is a read-only field.'.format(field)))))
         return c
 
     return readonly_decorator
@@ -48,7 +43,9 @@ def synced(field):
     def synced_decorator(c):
         setattr(c, field, property(
             lambda o: get_sync(o, field),
-            lambda o, v: set_sync(o, field, v)))
+            lambda o, v: set_sync(o, field, v),
+            lambda _: raise_(APIException(
+                'Could not delete {}: undefined behaviour.'.format(field)))))
         return c
 
     return synced_decorator
@@ -58,7 +55,7 @@ def writeonly(field):
     def writeonly_decorator(c):
         setattr(c, field, property(
             lambda _: raise_(WriteOnlyException(
-                '{} is a write-only field.'.format(field.title()))),
+                '{} is a write-only field.'.format(field))),
             lambda o, v: set_sync(o, field, v),
             lambda o: set_sync(o, field, None)))
         return c

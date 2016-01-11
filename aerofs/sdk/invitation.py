@@ -1,3 +1,4 @@
+from .common import Permission
 from .interface import APIObject
 from .interface import readonly
 
@@ -24,7 +25,8 @@ class Invitation(APIObject):
         self._share_name = json['share_name']
         from .user import User
         self._inviter = User(self.api, json['invited_by'])
-        self._permissions = json['permissions']
+        self._permissions = frozenset(
+            [Permission(p) for p in json['permissions']])
         return self
 
     def load(self):
