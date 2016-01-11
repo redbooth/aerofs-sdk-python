@@ -68,8 +68,8 @@ class Folder(APIObject):
 
     def load_path(self):
         data = self.api.get_folder_path(self.id)
-        # TODO: immutable list
-        self._path = [Folder(self.api).from_json(f) for f in data['folders']]
+        self._path = tuple([Folder(self.api).from_json(f)
+                            for f in data['folders']])
 
     def save_name(self):
         self.move(self.parent.id, self.name, matching=True)
