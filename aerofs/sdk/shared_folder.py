@@ -26,14 +26,17 @@ class SharedFolder(APIObject):
         self._name = json['name']
         self._is_external = json['is_external']
         from .shared_folder_member import SFMember
-        self._members = set([SFMember(self.api, self.id).from_json(f)
-                             for f in json['members']])
+        self._members = frozenset(
+            [SFMember(self.api, self.id).from_json(f)
+             for f in json['members']])
         from .shared_folder_group_member import SFGroupMember
-        self._groups = set([SFGroupMember(self.api, self.id).from_json(f)
-                            for f in json['groups']])
+        self._groups = frozenset(
+            [SFGroupMember(self.api, self.id).from_json(f)
+             for f in json['groups']])
         from .shared_folder_pending_member import SFPendingMember
-        self._pending = set([SFPendingMember(self.api, self.id).from_json(f)
-                             for f in json['pending']])
+        self._pending = frozenset(
+            [SFPendingMember(self.api, self.id).from_json(f)
+             for f in json['pending']])
         self._caller_permissions = json['caller_effective_permissions']
         return self
 

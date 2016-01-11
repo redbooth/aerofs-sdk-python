@@ -16,11 +16,10 @@ class Children(APIObject):
 
     def from_json(self, json):
         from .file import File
-        # TODO: immutableset
-        self._files = set([File(self.api).from_json(f)
-                           for f in json['files']])
-        self._folders = set([Folder(self.api).from_json(f)
-                             for f in json['folders']])
+        self._files = frozenset([File(self.api).from_json(f)
+                                 for f in json['files']])
+        self._folders = frozenset([Folder(self.api).from_json(f)
+                                   for f in json['folders']])
         return self
 
 

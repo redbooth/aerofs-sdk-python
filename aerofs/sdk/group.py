@@ -17,8 +17,8 @@ class Group(APIObject):
         self._id = json['id']
         self._name = json['name']
         from .group_member import GroupMember
-        self._members = set([GroupMember(self.api, self.id).from_json(f)
-                             for f in json['members']])
+        self._members = frozenset([GroupMember(self.api, self.id).from_json(f)
+                                   for f in json['members']])
         return self
 
     def load(self):

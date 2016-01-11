@@ -29,11 +29,11 @@ class User(APIObject):
         self._last_name = json['last_name']
         if 'shares' in json:  # requires extra scopes
             from .shared_folder import SharedFolder
-            self._shares = set([SharedFolder(self.api).from_json(f)
-                                for f in json['shares']])
+            self._shares = frozenset([SharedFolder(self.api).from_json(f)
+                                      for f in json['shares']])
         if 'invitations' in json:  # requires extra scopes
             from .invitation import Invitation
-            self._invitations = set(
+            self._invitations = frozenset(
                 [Invitation(self.api, self.email).from_json(f)
                  for f in json['invitations']])
         return self
