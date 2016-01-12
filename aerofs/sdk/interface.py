@@ -19,7 +19,10 @@ def get_sync(o, field):
 
 def set_sync(o, field, v):
     o.__dict__['_' + field] = v
-    getattr(o, 'save_' + field)()
+    try:
+        getattr(o, 'save_{}'.format(field))()
+    except AttributeError:
+        raise APIException('No method for syncing {}'.format(field))
 
 
 def raise_(ex):
