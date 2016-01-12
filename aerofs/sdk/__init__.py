@@ -13,4 +13,3 @@ from .shared_folder_group_member import SFGroupMember
 from .shared_folder_member import SFMember
 from .shared_folder_pending_member import SFPendingMember
 from .user import User
-# TODO: add v1.4 objects
