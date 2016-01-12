@@ -4,7 +4,7 @@ This SDK also provides a higher-level abstraction of the AeroFS API. This
 implementation is located under `aerofs.sdk`.
 
 All resources must be initialized with a valid instance of an APIClient. For
-details, see [API Usage](examples/usage.api.md).
+details, see [API Usage](usage.api.md).
 
 The following resources are implemented:
 

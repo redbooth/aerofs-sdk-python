@@ -4,7 +4,7 @@ The API client implemented in this SDK (eg. `aerofs.api.APIClient`) should be
 used as follows:
 
 To initialize the instance, we must provide a valid
-`aerofs.api.InstanceConfiguration` as well as an [access token](examples/authentication.md)
+`aerofs.api.InstanceConfiguration` as well as an [access token](authentication.md)
 for the user for which we wish to make requests. We can then initialize the
 client with:
 
