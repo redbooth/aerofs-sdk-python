@@ -21,6 +21,18 @@ class SFPendingMember(APIObject):
         self._last_name = None
         self._permissions = None
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.shared_folder.id == other.shared_folder.id and \
+                    self.email == other.email
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return self.shared_folder.id != other.shared_folder.id and \
+                    self.email != other.email
+        return NotImplemented
+
     def from_json(self, json):
         self._email = json['email']
         self._first_name = json.get('first_name')  # present only for accounts

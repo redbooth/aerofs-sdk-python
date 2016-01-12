@@ -3,12 +3,14 @@ from .interface import readonly
 from .interface import synced
 
 
+@readonly('id', sync=False)
 @readonly('files', sync=False)
 @readonly('folders', sync=False)
 class Children(APIObject):
-    def __init__(self, api):
+    def __init__(self, api, pid):
         super(Children, self).__init__(api)
 
+        self._id = pid
         self._files = None
         self._folders = None
 
@@ -64,7 +66,7 @@ class Folder(APIObject):
 
     def load_children(self):
         data = self.api.get_folder_children(self.id)
-        self._children = Children(self.api).from_json(data)
+        self._children = Children(self.api, self.id).from_json(data)
 
     def load_path(self):
         data = self.api.get_folder_path(self.id)

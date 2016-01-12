@@ -26,6 +26,16 @@ class User(APIObject):
         self._two_factor = None
         self._devices = None
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.email == other.email
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return self.email != other.email
+        return NotImplemented
+
     def from_json(self, json):
         self._first_name = json['first_name']
         self._last_name = json['last_name']
