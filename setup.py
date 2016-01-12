@@ -2,12 +2,9 @@
 import setuptools
 
 
-# For reasons why you shouldn't do this, see:
-#   https://caremad.io/blog/setup-vs-requirement/
-# For all the fucks I give see:
-#   /dev/zero
 with open('requirements.txt', 'r') as f:
     requirements = f.read().splitlines()
+    requirements = filter(lambda x: not x.startswith('#'), requirements)
 
 
 setuptools.setup(
