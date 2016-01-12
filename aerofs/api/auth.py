@@ -47,3 +47,14 @@ class APIAuthClient(object):
         res = self.session.delete('{}{}'.format(self.url_prefix, route))
         res.raise_for_status()
         return 'ok'
+
+    def get_access_token_info(self, token):
+        route = '/auth/tokeninfo'
+        data = {'access_token': token}
+        # Embarrassingly, bifrost does not create a resource server for 3rd
+        # party apps, so we cannot actually use our own client id/secret here.
+        res = self.session.get(
+            '{}{}'.format(self.url_prefix, route), params=data,
+            auth=('oauth-havre', 'i-am-not-a-restful-secret'))
+        res.raise_for_status()
+        return res.json()
