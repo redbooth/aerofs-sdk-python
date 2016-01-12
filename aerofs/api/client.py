@@ -279,12 +279,12 @@ class APIClient(object):
         route = '/users/{}/shares'.format(email)
         return self._do_get(route, headers=headers)
 
-    def get_shared_folder(self, folder_id, ifnonematch=None):
+    def get_shared_folder(self, share_id, ifnonematch=None):
         headers = self.auth_headers
         if ifnonematch:
             headers['If-None-Match'] = ','.join(ifnonematch)
 
-        route = '/shares/{}'.format(folder_id)
+        route = '/shares/{}'.format(share_id)
         return self._do_get(route, headers=headers)
 
     def create_shared_folder(self, foldername):
@@ -294,89 +294,89 @@ class APIClient(object):
 
     # sf member object
 
-    def get_sf_members(self, folder_id, ifnonematch=None):
+    def get_sf_members(self, share_id, ifnonematch=None):
         headers = self.auth_headers
         if ifnonematch:
             headers['If-None-Match'] = ','.join(ifnonematch)
 
-        route = '/shares/{}/members'.format(folder_id)
+        route = '/shares/{}/members'.format(share_id)
         return self._do_get(route, headers=headers)
 
-    def get_sf_member(self, folder_id, email, ifnonematch=None):
+    def get_sf_member(self, share_id, email, ifnonematch=None):
         headers = self.auth_headers
         if ifnonematch:
             headers['If-None-Match'] = ','.join(ifnonematch)
 
-        route = '/shares/{}/members/{}'.format(folder_id, email)
+        route = '/shares/{}/members/{}'.format(share_id, email)
         return self._do_get(route, headers=headers)
 
-    def add_sf_member(self, folder_id, email, permissions):
-        route = '/shares/{}/members'.format(folder_id)
+    def add_sf_member(self, share_id, email, permissions):
+        route = '/shares/{}/members'.format(share_id)
         data = {'email': email, 'permissions': permissions}
         return self._do_post(route, data)
 
-    def update_sf_member(self, folder_id, email, permissions, ifmatch=None):
+    def update_sf_member(self, share_id, email, permissions, ifmatch=None):
         headers = self.auth_headers
         if ifmatch:
             headers['If-Match'] = ','.join(ifmatch)
 
-        route = '/shares/{}/members/{}'.format(folder_id, email)
+        route = '/shares/{}/members/{}'.format(share_id, email)
         data = {'permissions': permissions}
         return self._do_put(route, data, headers=headers)
 
-    def remove_sf_member(self, folder_id, email, ifmatch=None):
+    def remove_sf_member(self, share_id, email, ifmatch=None):
         headers = self.auth_headers
         if ifmatch:
             headers['If-Match'] = ','.join(ifmatch)
 
-        route = '/shares/{}/members/{}'.format(folder_id, email)
+        route = '/shares/{}/members/{}'.format(share_id, email)
         return self._do_delete(route, headers=headers)
 
     # sf group member object
 
-    def get_sf_group_members(self, folder_id):
-        route = '/shares/{}/groups'.format(folder_id)
+    def get_sf_group_members(self, share_id):
+        route = '/shares/{}/groups'.format(share_id)
         return self._do_get(route)
 
-    def get_sf_group_member(self, folder_id, group_id):
-        route = '/shares/{}/groups/{}'.format(folder_id, group_id)
+    def get_sf_group_member(self, share_id, group_id):
+        route = '/shares/{}/groups/{}'.format(share_id, group_id)
         return self._do_get(route)
 
-    def add_sf_group_member(self, folder_id, group_id, permissions):
-        route = '/shares/{}/groups'.format(folder_id)
+    def add_sf_group_member(self, share_id, group_id, permissions):
+        route = '/shares/{}/groups'.format(share_id)
         data = {'id': group_id, 'permissions': permissions}
         return self._do_post(route, data)
 
-    def update_sf_group_member(self, folder_id, group_id, permissions):
-        route = '/shares/{}/groups/{}'.format(folder_id, group_id)
+    def update_sf_group_member(self, share_id, group_id, permissions):
+        route = '/shares/{}/groups/{}'.format(share_id, group_id)
         data = {'permissions': permissions}
         return self._do_put(route, data)
 
-    def remove_sf_group_member(self, folder_id, group_id):
-        route = '/shares/{}/groups/{}'.format(folder_id, group_id)
+    def remove_sf_group_member(self, share_id, group_id):
+        route = '/shares/{}/groups/{}'.format(share_id, group_id)
         return self._do_delete(route)
 
     # sf pending member object
 
-    def get_sf_pending_members(self, folder_id, ifnonematch=None):
+    def get_sf_pending_members(self, share_id, ifnonematch=None):
         headers = self.auth_headers
         if ifnonematch:
             headers['If-None-Match'] = ','.join(ifnonematch)
 
-        route = '/shares/{}/pending'.format(folder_id)
+        route = '/shares/{}/pending'.format(share_id)
         return self._do_get(route, headers=headers)
 
-    def get_sf_pending_member(self, folder_id, email):
-        route = '/shares/{}/pending/{}'.format(folder_id, email)
+    def get_sf_pending_member(self, share_id, email):
+        route = '/shares/{}/pending/{}'.format(share_id, email)
         return self._do_get(route)
 
-    def add_sf_pending_member(self, folder_id, email, permissions, note):
-        route = '/shares/{}/pending'.format(folder_id)
+    def add_sf_pending_member(self, share_id, email, permissions, note):
+        route = '/shares/{}/pending'.format(share_id)
         data = {'email': email, 'permissions': permissions, 'note': note}
         return self._do_post(route, data)
 
-    def remove_sf_pending_member(self, folder_id, email):
-        route = '/shares/{}/pending/{}'.format(folder_id, email)
+    def remove_sf_pending_member(self, share_id, email):
+        route = '/shares/{}/pending/{}'.format(share_id, email)
         return self._do_delete(route)
 
     # invitation object
