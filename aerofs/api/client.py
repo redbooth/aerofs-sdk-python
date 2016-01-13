@@ -210,6 +210,14 @@ class APIClient(object):
     def upload_file_content(self, file_id, stream, ifmatch=None):
         route = '/files/{}/content'.format(file_id)
 
+        chunks = [stream.read(MAX_CHUNK_SIZE)]
+        while len(chunks[-1]) != 0:
+            chunks.append(stream.read(MAX_CHUNK_SIZE))
+
+        chunks.pop()
+        if len(chunks) == 1:
+            return self._do_put(route, io.BytesIO(chunks[0]), serialize=False)
+
         # Create upload identifier.
         headers = dict(self.auth_headers, **{
             'Content-Range': 'bytes */*',
@@ -223,23 +231,21 @@ class APIClient(object):
         etag = self.response_headers.get('ETag')
 
         # Upload content, one chunk at a time.
-        current_chunk = stream.read(MAX_CHUNK_SIZE)
         total_bytes_sent = 0
-        while len(current_chunk) != 0:
+        for chunk in chunks:
             headers = dict(self.auth_headers, **{
                 'Upload-ID': upload_id,
                 'Content-Range': 'bytes {}-{}/*'.format(
                     total_bytes_sent,
-                    total_bytes_sent + len(current_chunk) - 1),
+                    total_bytes_sent + len(chunk) - 1),
             })
             if etag:
                 headers['If-Match'] = etag
 
-            self._do_put(route, io.BytesIO(current_chunk), serialize=False,
+            self._do_put(route, io.BytesIO(chunk), serialize=False,
                          headers=headers)
 
-            total_bytes_sent += len(current_chunk)
-            current_chunk = stream.read(MAX_CHUNK_SIZE)
+            total_bytes_sent += len(chunk)
 
         # Commit upload.
         headers = dict(self.auth_headers, **{
