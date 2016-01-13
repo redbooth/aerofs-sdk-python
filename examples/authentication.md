@@ -1,7 +1,7 @@
 # Authentication
 
 There are two methods of authentication supported by the AeroFS API: individual
-access tokens and app tokens generated through OAUTH.
+access tokens and app tokens generated through OAuth.
 
 For the former, each user may find their token in the AeroFS web client. This
 token should automatically have full API access, with permissions for every
@@ -10,8 +10,8 @@ token should automatically have full API access, with permissions for every
 treated with caution; many destructive actions may be taken by users with this
 scope.
 
-The later is slightly more complex. The following code block illustrates the
-OAUTH flow for this SDK.
+The latter is slightly more complex. The following code block illustrates the
+OAuth flow for this SDK.
 
 ```python
 import aerofs
@@ -27,7 +27,7 @@ auth = aerofs.api.APIAuthClient(config, creds)
 url = auth.get_authorization_url(['organization.admin', 'user.password',
                                   'user.read', 'user.write'])
 
-# The user should be provided with `url` to allow OAUTH access to your app.
+# The user should be provided with `url` to allow OAuth access to your app.
 # They will be redirected to `http://my-web-app.com?code=XXXXXXXXXX
 # This route should use the below function to generate an access token for that
 # request.

@@ -55,8 +55,8 @@ Resource objects may also be completely created or destroyed: for example:
 root = aerofs.sdk.Folder(client, 'root')
 
 new_file = aerofs.sdk.File(client)
-new_file.create(root.id, 'filename.txt')  # Creates a new file
-new_file.content = open('~/test-file.txt', 'r')  # Updates the file's contents
-new_file.move(root.id, 'new-filename.txt')  # Renames or moves file
-new_file.delete()  # Deletes that file
+new_file.create(root.id, 'filename.txt') # Creates a new file
+new_file.content = open('~/test-file.txt', 'r') # Updates the file's contents
+new_file.move(root.id, 'new-filename.txt') # Renames or moves file
+new_file.delete() # Deletes that file
 ```

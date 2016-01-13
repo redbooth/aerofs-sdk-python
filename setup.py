@@ -9,12 +9,12 @@ with open('requirements.txt', 'r') as f:
 
 setuptools.setup(
     name='aerofs',
-    version='0.2',
+    version='1.3.0',
     description='aerofs',
     long_description='An AeroFS Private Cloud API SDK written in Python',
     keywords='sdk,api,aerofs,cloud',
-    author='Matt Pillar',
-    author_email='matt@aerofs.com',
+    author='AeroFS',
+    author_email='oss@aerofs.com',
     url='https://github.com/aerofs/aerofs-sdk-python',
     packages=setuptools.find_packages(exclude=['tests']),
     install_requires=requirements,
