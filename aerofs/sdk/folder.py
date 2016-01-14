@@ -1,4 +1,5 @@
 from .interface import APIObject
+from .interface import enable_etags
 from .interface import readonly
 from .interface import synced
 
@@ -32,7 +33,6 @@ class Children(APIObject):
 @readonly('shared_folder')
 @readonly('path')
 @readonly('children')
-@readonly('etags', sync=False)
 class Folder(APIObject):
     def __init__(self, api, fid=None):
         super(Folder, self).__init__(api)
@@ -45,8 +45,6 @@ class Folder(APIObject):
         self._path = None
         self._children = None
 
-        self._etags = None
-
     def from_json(self, json):
         self._id = json['id']
         self._name = json['name']
@@ -58,11 +56,10 @@ class Folder(APIObject):
             self._shared_folder = SharedFolder(self.api, json['sid'])
         return self
 
+    @enable_etags
     def load(self):
         data = self.api.get_folder(self.id)
         self.from_json(data)
-
-        self._etags = [self.api.response_headers['ETag']]
 
     def load_children(self):
         data = self.api.get_folder_children(self.id)
@@ -79,12 +76,12 @@ class Folder(APIObject):
     def save_parent(self):
         self.move(self.parent.id, self.name, matching=True)
 
+    @enable_etags
     def create(self, parent_id, name):
         data = self.api.create_folder(parent_id, name)
         self.from_json(data)
 
-        self._etags = [self.api.response_headers['ETag']]
-
+    @enable_etags
     def move(self, parent_id, name, matching=False):
         if not matching:
             self._etags = None
@@ -92,8 +89,6 @@ class Folder(APIObject):
         data = self.api.move_folder(self.id, parent_id, name,
                                     ifmatch=self._etags)
         self.from_json(data)
-
-        self._etags = [self.api.response_headers['ETag']]
 
     def share(self):
         self.api.share_folder(self.id)

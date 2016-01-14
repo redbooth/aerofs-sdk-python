@@ -6,6 +6,7 @@ class ContentState(enum.Enum):
     SYNCING = 'SYNCING'
     DESELECTED = 'DESELECTED'
     INSUFFICIENT_STORAGE = 'INSUFFICIENT_STORAGE'
+    UNKNOWN = 'UNKNOWN'
 
 
 class Permission(enum.Enum):

@@ -3,6 +3,16 @@ from .error import ReadOnlyException
 from .error import WriteOnlyException
 
 
+def enable_etags(fn):
+    def enable_etags_wrapper(self, *args, **kwargs):
+        fn(self, *args, **kwargs)
+        etag = self.api.response_headers.get('ETag')
+        if etag:
+            self.__dict__['_etags'] = [etag]
+
+    return enable_etags_wrapper
+
+
 def get_sync(o, field):
     NoneType = type(None)
     if isinstance(o.__dict__['_' + field], NoneType):
@@ -66,9 +76,12 @@ def writeonly(field):
     return writeonly_decorator
 
 
+@readonly('etags', sync=False)
 class APIObject(object):
     def __init__(self, api):
         self.api = api
+
+        self._etags = None
 
     def from_json(self, _json):
         raise NotImplementedError()

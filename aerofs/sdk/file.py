@@ -1,5 +1,6 @@
 from .common import ContentState
 from .interface import APIObject
+from .interface import enable_etags
 from .interface import readonly
 from .interface import synced
 
@@ -13,7 +14,6 @@ from .interface import synced
 @readonly('path')
 @synced('content')
 @readonly('content_state')
-@readonly('etags', sync=False)
 class File(APIObject):
     def __init__(self, api, fid=None):
         super(File, self).__init__(api)
@@ -29,8 +29,6 @@ class File(APIObject):
         self._content = None
         self._content_state = None
 
-        self._etags = None
-
     def from_json(self, json):
         self._id = json['id']
         self._name = json['name']
@@ -44,20 +42,20 @@ class File(APIObject):
 
         # https://bitbucket.org/logilab/pylint/issues/729/enums-on-python-27-from-the-enum34-package
         # pylint: disable=E1136
-        self._content_state = ContentState[json.get('content_state')]
+        self._content_state = ContentState[json.get('content_state',
+                                                    'UNKNOWN')]
         return self
 
+    @enable_etags
     def load(self):
         data = self.api.get_file(self.id)
         self.from_json(data)
 
-        self._etags = [self.api.response_headers['ETag']]
-
+    @enable_etags
     def load_content(self):
         self._content = self.api.get_file_content(self.id)
 
         self._mime_type = self.api.response_headers['Content-Type']
-        self._etags = [self.api.response_headers['ETag']]
 
     def load_path(self):
         data = self.api.get_folder_path(self.id)
@@ -79,12 +77,12 @@ class File(APIObject):
     def save_parent(self):
         self.move(self.parent.id, self.name, matching=True)
 
+    @enable_etags
     def create(self, parent_id, name):
         data = self.api.create_file(parent_id, name)
         self.from_json(data)
 
-        self._etags = [self.api.response_headers['ETag']]
-
+    @enable_etags
     def move(self, parent_id, name, matching=False):
         if not matching:
             self._etags = None
@@ -92,8 +90,6 @@ class File(APIObject):
         data = self.api.move_file(self.id, parent_id, name,
                                   ifmatch=self._etags)
         self.from_json(data)
-
-        self._etags = [self.api.response_headers['ETag']]
 
     def delete(self, matching=False):
         if not matching:
