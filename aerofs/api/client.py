@@ -172,10 +172,10 @@ class APIClient(object):
         route = '/folders/{}'.format(folder_id)
         return self._do_delete(route, headers=headers)
 
-    # TODO: why doesn't this work?
-    def share_folder(self, folder_id):
-        route = '/folders/{}/is_shared'.format(folder_id)
-        return self._do_put(route, None)
+    # TODO: Disabled pending v1.4
+    # def share_folder(self, folder_id):
+    #     route = '/folders/{}/is_shared'.format(folder_id)
+    #     return self._do_put(route, None)
 
     # file object
 

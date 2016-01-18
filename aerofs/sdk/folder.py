@@ -90,9 +90,10 @@ class Folder(APIObject):
                                     ifmatch=self._etags)
         self.from_json(data)
 
-    def share(self):
-        self.api.share_folder(self.id)
-        self.load()
+    # TODO: Disabled pending API v1.4
+    # def share(self):
+    #     self.api.share_folder(self.id)
+    #     self.load()
 
     def delete(self, matching=False):
         if not matching:
