@@ -4,7 +4,7 @@ import setuptools
 
 with open('requirements.txt', 'r') as f:
     requirements = f.read().splitlines()
-    requirements = filter(lambda x: not x.startswith('#'), requirements)
+    requirements = [x for x in requirements if not x.startswith('#')]
 
 
 setuptools.setup(

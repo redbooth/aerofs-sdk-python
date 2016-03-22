@@ -1,4 +1,5 @@
 import requests
+from future.utils import iteritems
 
 
 class APIAuthClient(object):
@@ -21,13 +22,13 @@ class APIAuthClient(object):
 
     def get_access_token_with_code(self, code):
         route = '/auth/token'
-        data = '&'.join('{}={}'.format(k, v) for k, v in {
+        data = '&'.join('{}={}'.format(k, v) for k, v in iteritems({
             'client_id': self.app_credentials.client_id,
             'client_secret': self.app_credentials.client_secret,
             'redirect_uri': self.app_credentials.redirect_uri,
             'grant_type': 'authorization_code',
             'code': code,
-        }.iteritems())
+        }))
         res = self.session.post(
             '{}{}'.format(self.url_prefix, route), data=data,
             headers={'Content-Type': 'application/x-www-form-urlencoded'})

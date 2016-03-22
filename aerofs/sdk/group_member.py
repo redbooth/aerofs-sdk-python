@@ -29,6 +29,9 @@ class GroupMember(APIObject):
                     self.email != other.email
         return NotImplemented
 
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
+
     def from_json(self, json):
         self._email = json['email']
         self._first_name = json['first_name']
