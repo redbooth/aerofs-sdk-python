@@ -1,7 +1,14 @@
 import io
 import urllib
-
 import requests
+from future.utils import iteritems
+
+try:
+    # import quote_plus for Python3
+    from urllib.parse import quote_plus
+except ImportError:
+    # import quote_plus for Python2
+    from urllib import quote_plus
 
 
 VERSION_PREFIX = '/api/v1.3'
@@ -67,7 +74,7 @@ class APIClient(object):
         if serialize and data:
             res = self.session.put(url, json=data, headers=headers)
         else:
-            headers = {k: v for k, v in headers.iteritems()
+            headers = {k: v for k, v in iteritems(headers)
                        if k != 'Content-Type'}
             res = self.session.put(url, data=data, headers=headers)
         return self._handle_response(res)
@@ -122,7 +129,7 @@ class APIClient(object):
     # invitee object
 
     def get_invitee(self, email):
-        route = '/invitees/{}'.format(urllib.quote_plus(email))
+        route = '/invitees/{}'.format(quote_plus(email))
         return self._do_get(route)
 
     def create_invitee(self, email_from, email_to):
@@ -131,7 +138,7 @@ class APIClient(object):
         return self._do_post(route, data)
 
     def delete_invitee(self, email):
-        route = '/invitees/{}'.format(urllib.quote_plus(email))
+        route = '/invitees/{}'.format(quote_plus(email))
         return self._do_delete(route)
 
     # folder object
@@ -388,22 +395,22 @@ class APIClient(object):
     # invitation object
 
     def get_invitations(self, email):
-        route = '/users/{}/invitations'.format(urllib.quote_plus(email))
+        route = '/users/{}/invitations'.format(quote_plus(email))
         return self._do_get(route)
 
     def get_invitation(self, email, uuid):
-        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+        route = '/users/{}/invitations/{}'.format(quote_plus(email),
                                                   uuid)
         return self._do_get(route)
 
     def accept_invitation(self, email, uuid, external=False):
-        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+        route = '/users/{}/invitations/{}'.format(quote_plus(email),
                                                   uuid)
         route += '?external=' + ('1' if external else '0')
         return self._do_post(route, dict())
 
     def ignore_invitation(self, email, uuid):
-        route = '/users/{}/invitations/{}'.format(urllib.quote_plus(email),
+        route = '/users/{}/invitations/{}'.format(quote_plus(email),
                                                   uuid)
         return self._do_delete(route)
 

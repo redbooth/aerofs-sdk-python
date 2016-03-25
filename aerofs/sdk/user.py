@@ -36,6 +36,9 @@ class User(APIObject):
             return self.email != other.email
         return NotImplemented
 
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
+
     def from_json(self, json):
         self._first_name = json['first_name']
         self._last_name = json['last_name']
