@@ -1,5 +1,4 @@
 import io
-import urllib
 import requests
 from future.utils import iteritems
 
