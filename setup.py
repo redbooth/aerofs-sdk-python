@@ -9,7 +9,7 @@ with open('requirements.txt', 'r') as f:
 
 setuptools.setup(
     name='aerofs',
-    version='1.3.4',
+    version='1.3.5',
     description='An AeroFS Private Cloud API SDK written in Python',
     long_description='An AeroFS Private Cloud API SDK written in Python',
     keywords='sdk,api,aerofs,cloud',
